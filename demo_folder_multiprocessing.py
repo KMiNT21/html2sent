@@ -3,7 +3,7 @@
 import os
 import multiprocessing
 from functools import partial
-from itertools import chain
+# from itertools import chain
 
 import html2sent
 
