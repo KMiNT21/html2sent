@@ -8,7 +8,8 @@ import nltk
 
 # HTML processing settings
 
-PARAGRAPH_LAST_CHAR_MUST_BE_IN = ['.', '!', '?']
+PARAGRAPH_LAST_CHAR_MUST_BE_IN = '.!?'
+# PARAGRAPH_LAST_CHAR_MUST_BE_IN = ['.', '!', '?']
 FINALYZE_PARAGRAPH_WITH_PERIOD_IF_NOT = True
 SKIP_FINALYZING_IF_ENDS_WITH_COLON = True  # i.e. speach quote (Somebody: Text)
 REMOVE_TIME_TAG = True
