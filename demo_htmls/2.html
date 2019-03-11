@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ru-ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Программерский детектив - KMiNT21 Dev Blog</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta name="generator" content="Hugo 0.53" />
+	<meta property="og:title" content="Программерский детектив" />
+<meta property="og:description" content="Итак, пока я тут доделал парсер-конвертер html-статей в набор предложений (с помощью BeautifulSoup4, различных регулярок и NLTK.tokenize - для подачи на вход нейросети на TensorFlow) и доволен чистотой результата, решил сделать паузу и, все-таки, написать эту забавную и поучительную историю.
+Программерский детектив Приятно наблюдать как недавно собранный компьютер &ldquo;перемалывает&rdquo; всеми 8(16) ядрами нужную мне задачу. Вот только я не ожидал, что придется перезапускать это так много раз.
+  В последний раз так мозг закипал, наверное, только когда нужно было сделать динамический пересчет релокейшенов загруженного модуля win32." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/detective/" /><meta property="article:published_time" content="2019-01-10T14:32:18&#43;02:00"/>
+<meta property="article:modified_time" content="2019-01-10T14:32:18&#43;02:00"/>
+
+	
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/syntax.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="KMiNT21 Dev Blog" rel="home">
+				<div class="logo__title">KMiNT21 Dev Blog</div>
+				
+			</a>
+		</div>
+		<div class="divider"></div>
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Программерский детектив</h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-01-10T14:32:18">January 10, 2019</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/development" rel="category">Development</a></span>
+</div>
+</div>
+		</header><div class="content post__content clearfix">
+			
+
+<p><em>Итак, пока я тут доделал парсер-конвертер html-статей в набор предложений (с помощью BeautifulSoup4, различных регулярок и NLTK.tokenize - для подачи на вход нейросети на TensorFlow) и доволен чистотой результата, решил сделать паузу и, все-таки, написать эту забавную и поучительную историю.</em></p>
+
+<hr />
+
+<h2 id="программерский-детектив">Программерский детектив</h2>
+
+<p>Приятно наблюдать как недавно собранный компьютер &ldquo;перемалывает&rdquo; всеми 8(16) ядрами нужную мне задачу. Вот только я не ожидал, что придется перезапускать это так много раз.</p>
+
+<figure>
+    <img src="/i/core16.png"
+         alt="CPU utilization"/> 
+</figure>
+
+
+<p>В последний раз так мозг закипал, наверное, только когда нужно было сделать динамический пересчет релокейшенов загруженного модуля win32. И это было так давно, что я уже не могу вспомнить что конкретно я там делал.</p>
+
+<p>А вот в этот раз сильно забуксовал с библиотекой поиска схожих (релевантных) документов-статей (#python, #gensim).
+То у меня изначально никак не хотела работать цепочка
+<a href="https://radimrehurek.com/gensim/tut2.html">трансформации векторов</a>  в разные пространства bag-of-words -&gt; TfIdf -&gt; LSI
+(точнее, не получалось правильно добавлять новые документы после первичной инициализации).
+То потом за время эксплуатации не раз приходилось все сбрасывать и инициализировать заново
+(а, например, самый &ldquo;тяжелый&rdquo; набор данных пересчитывается больше 2 часов при полной загрузке ЦПУ).</p>
+
+<p>Замучали периодические segfaults - питоновский процесс просто вырубался без предупреждений, вызывая рассинхрон &ldquo;базы&rdquo; (корпус документов и соответствующий ему по кол-ву список идентификаторов последних). В течении многих дней я все это и обвешивал логами чуть ли не после каждой операции, и дополнительные проверки ввел, чтобы при сбое в наборе данных не происходила попытка их обработать&hellip;</p>
+
+<figure>
+    <img src="/i/messages.png"/> 
+</figure>
+
+
+<p>Но в итоге, наконец, получил очередной сбой, в котором размер корпуса (<a href="http://networkrepository.com/mtx-matrix-market-format.html">Market Matrix формат</a>) по кол-ву документов совпадал с размером списка добавленных  ID-шек статей, то при этом стабильно каждый запуск завершался segfault. Вот тут стало все уже интересней.</p>
+
+<p>Первым делом собрал (как всегда - с боями) из исходников самую последниюю версию питона - 3.7, попутно обновив кучу библиотек на Debian Jessie (для этого даже пришлось подключить Debian Testing репозиторий - хорошо хоть ничего не сломалось.) Картина не поменялась. Пришлось искать как это можно отдебажить.</p>
+
+<p>По строчке в /var/log/messages понять ничего было нельзя кроме того, что это был сбой в .so-модуле sparsetools библиотеки ScyPy. По примерам со stackoverflow с помощью gdb вышло только уточнить то, что происходил сбой в стандартной си-библиотеке.</p>
+
+<p>В общем, не оставалось ничего другого, как нажать F3 и глазами всматриваться в строчки корпуса, пытаясь понять что с ним не так, благо формат у него подходящий для чтения человеком. В отличии от файла-словаря (word-&gt;id). Но тот мне и не нужен был, так как не менялся после первичной инициализации исходным набором документов, что подтверждала дата его модификации.</p>
+
+<div class="highlight"><pre class="chroma"><code class="language-plaintext" data-lang="plaintext">...
+25833 34815 1.0
+25833 39749 1.0
+25833 54151 3.0
+25833 56543 2.0
+25833 60926 2.0
+25834 4 5.0
+25834 14 1.0
+25834 20 4.0
+25834 22 1.0
+...</code></pre></div>
+
+<p>Через какое-то время на глаза попалась очень странная строка. В ней было число-идентификатор (слова в словаре) какое-то слишком большое. Перепроверил - так и есть. У меня словарь меньше. Вот сюрпрайз так сюрпрайз. Дальше я уже методом &ldquo;reverse engineering&rdquo; начал проверять &ldquo;слепки&rdquo; документов в корпусе на соответствие реальным статьям. Т.е. получал список слов по их ID-шкам в dictionary, получал ID документа и всматривался в текст на предмет наличия этих слов.</p>
+
+<p>И вот все совпадало ровно до этого сбойного документа. В нем набор слов выходил каким-то странным - найти их в исходном тексте статьи я не мог. Удивление мое все нарастало. Немного еще подумав, я наудачу начал перебирать наборы данных других сайтов, обращая внимание на те, размеры словарей в которых были больше интересующего меня значения.</p>
+
+<p>Дальше - банальный поиск по файлу корпуса (corpus.mm), и я нахожу полное вхождение того &ldquo;сбойного&rdquo; документа в совершенно другой базе! ШОК&hellip; Сижу и думаю - как так могло получиться-то&hellip; Тем более, что пути везде полные указываются у меня. Полез снова в свои исходники, всматриваюсь&hellip;</p>
+
+<div class="highlight"><pre class="chroma"><code class="language-py3" data-lang="py3">        <span class="n">temp_file</span> <span class="o">=</span> <span class="n">get_tmpfile</span><span class="p">(</span><span class="s1">&#39;corpus-mm-last_new_doc.tmp&#39;</span><span class="p">)</span>
+        <span class="n">corpora</span><span class="o">.</span><span class="n">MmCorpus</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">temp_file</span><span class="p">,</span> <span class="p">[</span><span class="n">vec_bow</span><span class="p">])</span>
+        <span class="n">new_docs</span> <span class="o">=</span> <span class="n">corpora</span><span class="o">.</span><span class="n">MmCorpus</span><span class="p">(</span><span class="n">temp_file</span><span class="p">)</span>
+        <span class="n">new_corpus_mm</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">corpus_mm</span><span class="p">,</span> <span class="n">new_docs</span><span class="p">))</span></code></pre></div>
+
+<p>Тут, наконец, приходит озарение. Я как вставил изначально вызов функции get_tmpfile() из gensim.test.utils, так больше и не вспоминал даже.
+Эта функция просто формирует путь к папке для временных файлов, т.е. в моем случае это формировало путь /var/tmp/corpus-mm-last_new_doc.tmp
+Этот файл нужен лишь на короткое время для добавления документа к текущему корпусу. Но, как оказалось, в какие-то редкие моменты времени
+на моих VPS-ках все так замедляется / подвисает, что происходит накладка работы скриптов разных сайтов и перезапись в тот же временный файл до его отработки. :)</p>
+
+<p>В общем, загадка, наконец, разгадана. Убрал использование общей папки /tmp/ - больше  ошибок не наблюдается.
+Заодно решил заменить new_corpus_mm = list(itertools.chain(corpus_mm, new_docs)) на new_corpus_mm = itertools.chain(corpus_mm, new_docs) для экономии памяти.
+И вот недавно смотрю - все корпуса везде у меня обнулились. Хорошо, что если не сбоев, то мне и корпуса не нужны. Лишь бы similarity-индексы целыми были. :)
+Зря я преобразование в list() убрал - не умеет сериализатор gensim.corpora с итератором работать. Эх&hellip;</p>
+
+<p><em>Впрочем, это уже совсем другая история.</em></p>
+
+		</div>
+		
+<div class="post__tags tags clearfix">
+	<svg class="icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/development/" rel="tag">Development</a></li>
+		<li class="tags__item"><a class="tags__link btn" href="/tags/python/" rel="tag">Python</a></li>
+		<li class="tags__item"><a class="tags__link btn" href="/tags/gensim/" rel="tag">Gensim</a></li>
+		<li class="tags__item"><a class="tags__link btn" href="/tags/corpora/" rel="tag">Corpora</a></li>
+		<li class="tags__item"><a class="tags__link btn" href="/tags/nltk/" rel="tag">NLTK</a></li>
+	</ul>
+</div>
+	</article>
+</main>
+<div id="disqus_thread"></div>
+<script>
+
+
+
+
+
+(function() { 
+var d = document, s = d.createElement('script');
+s.src = 'https://dev-kmint21-info.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/posts/autossh-on-wsl/" rel="prev"><span class="post-nav__caption">«&thinsp;Previous</span><p class="post-nav__post-title">AutoSSH on WSL</p></a>
+	</div>
+	<div class="post-nav__item post-nav__item--next">
+		<a class="post-nav__link" href="/posts/tensor-flow-gpu/" rel="next"><span class="post-nav__caption">Next&thinsp;»</span><p class="post-nav__post-title">TensorFlow GPU</p></a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="SEARCH..." value="" name="q" aria-label="SEARCH...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/posts/python-summa/">NLP: список русских стоп-слов</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/neural-networks/">Положение дел в Deep Learning</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/tensor-flow-gpu/">TensorFlow GPU</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/detective/">Программерский детектив</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/autossh-on-wsl/">AutoSSH on WSL</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/lang-caps-switcher/">Написал переключалку языков на CAPSLOCK</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/youarep/">Тыжпрограммист</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/terminator/">Копирование на выбор...</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/mc-tabs/">Про режимы в Midnight Commander</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/django-2018/">Django-агрегатор</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ping-wrapper/">Зарелизил Ping Wrapper</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/privacy-formula/">Оживил privacy-formula.com</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ide-2018/">Решил сменить IDE</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/pre-ping-wrapper/">Шутка дня</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/chrome-extentions/">Заглянул себе в Chrome extentions</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/python-go/">Ради эксперимента переписал один свой скрипт с Python на Go</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/ai-art/">Нейросеть - ценитель</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/debug-logs/">Недавно сегодня слышу - винт тарахтит</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/pycharm/">Про PyCharm</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/mind-maps/">Майнд-карты</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/linux-mint/">Linux Mint</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/iskra/">Мое бывшее рабочее место</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/gensim-1/">Кластеризация методом k-средних</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/normal-distribution/">Распределение Гаусса - интерактивная утилита для подбора значений</a></li>
+			<li class="widget__item"><a class="widget__link" href="/posts/billing-user-interface/">Интерфейс главной страницы биллинга</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/admin">Admin</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/development">Development</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/hacking">Hacking</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Facebook" rel="noopener noreferrer" href="https://facebook.com/kmint21" target="_blank">
+				<svg class="widget-social__link-icon icon-facebook" viewBox="0 0 352 352" width="24" height="24" fill="#fff"><path d="m0 32v288c0 17.5 14.5 32 32 32h288c17.5 0 32-14.5 32-32v-288c0-17.5-14.5-32-32-32h-288c-17.5 0-32 14.5-32 32zm320 0v288h-83v-108h41.5l6-48h-47.5v-31c0-14 3.5-23.5 23.5-23.5h26v-43.5c-4.4-.6-19.8-1.5-37.5-1.5-36.9 0-62 22.2-62 63.5v36h-42v48h42v108h-155v-288z"/></svg>
+				<span>Facebook</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Twitter" rel="noopener noreferrer" href="https://twitter.com/kmint21" target="_blank">
+				<svg class="widget-social__link-icon icon-twitter" viewBox="0 0 384 312" width="24" height="24" fill="#fff"><path d="m384 36.9c-14.1 6.3-29.3 10.5-45.2 12.4 16.3-9.7 28.8-25.2 34.6-43.6-15.2 9-32.1 15.6-50 19.1-14.4-15.2-34.9-24.8-57.5-24.8-43.5 0-78.8 35.3-78.8 78.8 0 6.2.7 12.2 2 17.9-65.5-3.3-123.5-34.6-162.4-82.3-6.7 11.6-10.6 25.2-10.6 39.6 0 27.3 13.9 51.4 35 65.6-12.9-.4-25.1-4-35.7-9.9v1c0 38.2 27.2 70 63.2 77.2-6.6 1.8-13.6 2.8-20.8 2.8-5.1 0-10-.5-14.8-1.4 10 31.3 39.1 54.1 73.6 54.7-27 21.1-60.9 33.7-97.8 33.7-6.4 0-12.6-.4-18.8-1.1 34.9 22.4 76.3 35.4 120.8 35.4 144.9 0 224.1-120 224.1-224.1 0-3.4-.1-6.8-.2-10.2 15.4-11.1 28.7-25 39.3-40.8z"/></svg>
+				<span>Twitter</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/kmint21" target="_blank">
+				<svg class="widget-social__link-icon icon-github" viewBox="0 0 384 374" width="24" height="24" fill="#fff"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2019 KMiNT21 Dev Blog.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script></body>
+</html>
