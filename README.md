@@ -3,12 +3,12 @@ It is better to combine with library that remove or unwrap abbreviations with pe
 
 Instalation:
 
-##Install NLTK python package:
+## Install NLTK python package:
 ```
 pip install nltk
 ```
 
-##Download punkt data:
+## Download punkt data:
 
 import nltk
 nltk.download('punkt')
@@ -20,14 +20,14 @@ git clone https://github.com/mhq/train_punkt.git
 
 Copy russian.pickle into nltk_data folder (ensure the appropriate location for your OS).
 
-##Download this library:
+## Download this library:
 git clone https://github.com/KMiNT21/html2sent.git
 
 
-##Use it as simple:
+## Use it as simple:
 ```python
 import html2sent
 sentences = html2sent.tokenize(html, language='english')
 ```
 
-Or run demo `demo_simple.py` and `demo_folder_multiprocessing.py`
+Demo: `demo_simple.py` and `demo_folder_multiprocessing.py`
