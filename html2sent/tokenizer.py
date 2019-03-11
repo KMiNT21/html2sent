@@ -64,8 +64,8 @@ def html2text(html: str) -> str:
                 a_tags_in_li = li.find_all('a')
                 if len(a_tags_in_li) == 1:
                     li_is_link = True
-                if li_is_link and \
-                    li.get_text().strip() == a_tags_in_li[0].get_text().strip():
+                if li_is_link and li.get_text().strip() == \
+                        a_tags_in_li[0].get_text().strip():
                     can_be_removed = True
                 ul_can_be_removed_flags.append(li_is_link)
                 ul_can_be_removed_flags.append(can_be_removed)
@@ -124,12 +124,12 @@ def preprocess_text(text: str) -> str:
     # qmarks = '[“”〝〞«»]' https://stackoverflow.com
     # /questions/13535172/list-of-all-unicodes-open-close-brackets
     if REMOVE_QUOTATION_MARKS_IF_MULT_SENT_INSIDE:
-        text = re.sub(\
+        text = re.sub(
             r'[“〝«]([^“〝«”〞»]*?[А-ЯZ-Z][\.\!\?][^“〝«”〞»]*?)[”〞»]',
             r'\1', text)
         # Do not try with general quote marks " - impossible to guess begin/end
         # More strict pattern:
-        text = re.sub(\
+        text = re.sub(
             r'\s*[\"\']([А-ЯZ-Z][а-яa-z][^\"\']*?[\.\!\?][^\"\']*?)[\"\']',
             r'.\n\1', text)
 
