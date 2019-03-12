@@ -6,6 +6,7 @@ This library works with **HTML-content** and modifies it in some tags to improve
 ## Install NLTK python package
 ``` pip install nltk```
 
+
 ## Download punkt data
 
 ```python
@@ -15,6 +16,7 @@ nltk.download('punkt')
 
 ## Download this library
 git clone https://github.com/KMiNT21/html2sent.git
+
 
 ## Using
 ```python
