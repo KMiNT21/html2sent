@@ -29,11 +29,14 @@ Demo: `demo_simple.py` and `demo_folder_multiprocessing.py`
 
 Если для разделения полученного текста на предложения используется библиотека **nltk**,
 то для русского языка нужно еще скачать обученный ru_punkt-токенизатор. 
+
 Варианты:
+
 а) git clone https://github.com/mhq/train_punkt.git
 б) git clone https://github.com/Mottl/ru_punkt.git
 
-Скопируйте файл russian.pickle в папку nltk_data ( к остальным языковым .pickle файлам)
+Скопируйте файл russian.pickle в папку nltk_data (к остальным языковым .pickle файлам)
 
 Альтернативный более точный вариант - библиотека **razdel**
+
 Подробнее об использовании - https://github.com/natasha/razdel
