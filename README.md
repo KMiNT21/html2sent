@@ -32,8 +32,9 @@ Demo: `demo_simple.py` and `demo_folder_multiprocessing.py`
 
 Варианты:
 
-а) git clone https://github.com/mhq/train_punkt.git
-б) git clone https://github.com/Mottl/ru_punkt.git
+- git clone https://github.com/mhq/train_punkt.git
+
+- git clone https://github.com/Mottl/ru_punkt.git
 
 Скопируйте файл russian.pickle в папку nltk_data (к остальным языковым .pickle файлам)
 
