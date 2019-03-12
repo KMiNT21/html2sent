@@ -1,33 +1,39 @@
-This library works with HTML-content and modifies it in some tags to improve sentences tokenizer quality.
-It is better to combine with library that remove or unwrap abbreviations with period at the end (not a part of this lib).
 
-Instalation:
+This library works with **HTML-content** and modifies it in some tags to improve sentences tokenizer quality.
 
-## Install NLTK python package:
-```
-pip install nltk
-```
 
-## Download punkt data:
+# 
+## Install NLTK python package
+``` pip install nltk```
 
+## Download punkt data
+
+```python
 import nltk
 nltk.download('punkt')
+```
 
-For Russian language also download ru_punkt:
-
-git clone https://github.com/mhq/train_punkt.git
-(fork: https://github.com/KMiNT21/train_punkt.git )
-
-Copy russian.pickle into nltk_data folder (ensure the appropriate location for your OS).
-
-## Download this library:
+## Download this library
 git clone https://github.com/KMiNT21/html2sent.git
 
-
-## Use it as simple:
+## Using
 ```python
 import html2sent
 sentences = html2sent.tokenize(html, language='english')
 ```
 
 Demo: `demo_simple.py` and `demo_folder_multiprocessing.py`
+
+
+## For russian language
+
+Если для разделения полученного текста на предложения используется библиотека **nltk**,
+то для русского языка нужно еще скачать обученный ru_punkt-токенизатор. 
+Варианты:
+а) git clone https://github.com/mhq/train_punkt.git
+б) git clone https://github.com/Mottl/ru_punkt.git
+
+Скопируйте файл russian.pickle в папку nltk_data ( к остальным языковым .pickle файлам)
+
+Альтернативный более точный вариант - библиотека **razdel**
+Подробнее об использовании - https://github.com/natasha/razdel
