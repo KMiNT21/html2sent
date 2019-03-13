@@ -24,14 +24,15 @@ import html2sent
 sentences = html2sent.tokenize(html, language='english')
 ```
 
-If you don't want to use NLTK, just just preprocess functions:
+If you don't want to use NLTK, you can just use preprocess functions:
 
 ```python
+import html2sent
 text = html2sent.html2text(html)
 text = html2sent.preprocess_text(text)
 ```
 
-Demo: `demo_simple.py` and `demo_folder_multiprocessing.py`
+Demo: [`demo_simple.py`](https://github.com/KMiNT21/html2sent/blob/master/demo_simple.py) and [`demo_folder_multiprocessing.py`](https://github.com/KMiNT21/html2sent/blob/master/demo_folder_multiprocessing.py)
 
 
 ## For russian language
