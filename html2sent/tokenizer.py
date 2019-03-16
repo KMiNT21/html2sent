@@ -14,6 +14,7 @@ SKIP_FINALYZING_IF_ENDS_WITH_COLON = True  # i.e. speach quote (Somebody: Text)
 REMOVE_TIME_TAG = True
 REMOVE_LISTS_OF_LINKS = True
 REMOVE_TABLES = False
+REMOVE_LISTS = False
 
 # TEXT processing settings
 
@@ -45,6 +46,10 @@ def html2text(html: str) -> str:
 
     if REMOVE_TABLES:
         for tag in soup('table'):
+            tag.extract()
+
+    if REMOVE_LISTS:
+        for tag in soup('ul'):
             tag.extract()
 
     divs_to_remove = '^(script|noscript|form|style|head|nav)$'
@@ -166,4 +171,6 @@ def tokenize(html: str, language='english') -> List[str]:
     text = html2text(html)
     text = preprocess_text(text)
     sentences = nltk.tokenize.sent_tokenize(text, language)
-    return sentences
+    good_sentences = [sent for sent in sentences \
+        if len(sent.split()) > 1]
+    return good_sentences
