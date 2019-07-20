@@ -12,7 +12,25 @@ Golden FTP Server is extremely easy to use personal FTP server for Windows and c
 <br><br>System Requirements: no special requirements<br><br>Company: KMiNT21 Software<br><br>Product Page: www.goldenftpserver.com<br><br>Download: www.goldenftpserver.com/golden-ftp-server.zip<br><br>Screenshot: www.goldenftpserver.com/screenshots.html
 """
 
-sentences = html2sent.tokenize(html, language='english')
+#sentences = html2sent.tokenize(html, language='english')
+#text = '\n'.join(sentences)
+#print(text)
+
+html = open('demo_htmls/3.html').read()
+
+sentences = html2sent.tokenize(html, language='russian')
 text = '\n'.join(sentences)
 print(text)
+
+
+
+#text = html2sent.html2text(html)
+#text = html2sent.preprocess_text(text)
+#print(text)
+
+#import razdel
+#res = razdel.sentenize(text)
+#sentences = [s for _,_,s in res]
+#text = '\n'.join(sentences)
+#print(text)
 
